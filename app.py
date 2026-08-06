@@ -125,7 +125,7 @@ with st.sidebar:
     with st.expander("🛠️ Advanced RAG Settings"):
         model_name = st.text_input(
             "Model Name",
-            value="gemini-2.5-flash" if llm_provider == "Gemini" else "llama-3.3-70b-versatile",
+            value="gemini-3.5-flash" if llm_provider == "Gemini" else "llama-3.3-70b-versatile",
             help="The exact model ID sent to the provider. Change if you know a different model name.",
         )
         chunk_size = st.slider("Chunk Size", min_value=500, max_value=2000, value=1000, step=100)
@@ -213,8 +213,11 @@ def split_documents(documents, chunk_size, chunk_overlap):
 
 def build_vector_store(chunks, embedding_key):
     """Embeds the chunks and stores them in a FAISS vector store."""
+    # NOTE: Google retired the old "models/embedding-001" and
+    # "models/text-embedding-004" endpoints (Jan 2026). The current
+    # replacement is "models/gemini-embedding-001".
     embeddings = GoogleGenerativeAIEmbeddings(
-        model="models/embedding-001",
+        model="gemini-embedding-2",
         google_api_key=embedding_key,
     )
     return FAISS.from_documents(chunks, embeddings)
